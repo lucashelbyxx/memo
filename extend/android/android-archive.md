@@ -1,0 +1,1 @@
+[Android 组件化最佳实践 - 掘金 (juejin.cn)](https://juejin.cn/post/6844903649102004231#heading-16)
