@@ -51,7 +51,7 @@ string* ps = new string;
 
 数据可以有很多份，但函数只有一份。中间桥梁？
 
-
+<br/>
 
 C++ programs 代码基本形式
 
@@ -75,7 +75,7 @@ Standard Library
 
 extension file name 不一定是 .h 或 .cpp（在不同平台上可能不一样），也可能是 .hpp 或其他或甚至无延伸名。
 
-
+<br/>
 
 Output，C++ vs. C
 
@@ -103,7 +103,7 @@ int main() {
 }
 ```
 
-
+<br/>
 
 Header（头文件）中的防卫式声明、布局
 
@@ -134,7 +134,7 @@ complex::function ...	// class definition（类-定义）
 
 程序第一次 include 时定义这个 COMPLEX，会进入这个主体。第二次 COMPLEX 定义过了，就不会进入这个主体。
 
-
+<br/>
 
 class 的声明（declaration）
 
@@ -163,7 +163,7 @@ private:
 }
 ```
 
-
+<br/>
 
 class template（模板）简介
 
@@ -192,9 +192,7 @@ private:
 }
 ```
 
- 
-
-
+ <br/>
 
 # 构造函数
 
@@ -227,7 +225,7 @@ imag(const complex& x)
 
 如果你的函数是 inline function 会比较快、好。但是有些 function （太复杂）你说是  inline，编译器也不会当做 inline。你的 inline 只是对编译器的建议而已，是否真正的 inline 由编译器决定。
 
-
+<br/>
 
 access level（访问级别）
 
@@ -269,7 +267,7 @@ body 之中可以区分为某几大段，用 public、private 关键字来区分
 
 函数部分可以分为两部分：一部分是给外界用的，一部分是处理自己的私人事情的。这些段落可以任意交错出现。
 
-
+<br/>
 
 constuctor（ctor，构造函数）
 
@@ -313,7 +311,7 @@ C++ 语言说你想要创建一个对象，有一个函数会被自动调用起�
 
 对应的就有析构函数。不带指针的类多半不用写析构函数。
 
-
+<br/>
 
 ctor (构造函数) 可以有很多个 overloading (重载)
 
@@ -361,7 +359,7 @@ void real(double r) { re = r; }
 
 可能有很多种初值的设定，所以需要重载。C 是不允许多个重载函数的。
 
-
+<br/>
 
 constructor (构造函数) 被放在 private 区域
 
@@ -412,7 +410,7 @@ A& A::getInstance()
 }
 ```
 
-
+<br/>
 
 const member functions (常量成员函数)
 
@@ -451,7 +449,7 @@ private:
 
 不改变数据内容的在函数的后面加 const。class 里面的函数分成会改变数据和不会改变数据两种。
 
-
+<br/>
 
 参数传递：pass by value vs. pass by reference (to const)
 
@@ -505,7 +503,7 @@ C 传指针那个函数一改就影响我了，传引用也是。如果传引用
 
 如果可以的话，返回值也尽量传递引用。
 
-
+<br/>
 
 friend (友元)
 
@@ -536,7 +534,7 @@ inline complex& _doapl (complex* ths, const complex& r)
 
 在语言里面，朋友可以来拿数据。外界获取数据可以通过函数，但是对于 friend 可以网开一面。C++ 强调封装，朋友就打开了封装的大门。
 
-
+<br/>
 
 相同 class 的各个 objects 互为 friends (友元)
 
@@ -565,9 +563,7 @@ private:
 }
 ```
 
-
-
-
+<br/>
 
 class body 外的各种定义 (definitions)
 
@@ -594,7 +590,7 @@ inline complex& complex::operator += (const complex& r)
 
 第二种如果放在已有空间上面，就是上面的情况。
 
-
+<br/>
 
 好的代码风格：
 
@@ -604,7 +600,7 @@ inline complex& complex::operator += (const complex& r)
 4. 在类的 body 里面应该加 const 就加，如果不加，使用的时候可能报错
 5. 构造函数 initialize list 尽量用它
 
-
+<br/>
 
 operator overloading (操作符重载-1，成员函数) this
 
@@ -642,7 +638,7 @@ inline complex& complex::operator += (this, const complex& r)
 }
 ```
 
-
+<br/>
 
 return by  reference 语法分析
 
@@ -683,7 +679,7 @@ inline complex& complex::operator += (const complex& r)
 
 用reference来接收速度快，用value来接收速度慢。但反正我送出去的都不管。
 
-
+<br/>
 
 class body 之外的各种定义 (definition)
 
@@ -710,7 +706,7 @@ real(const complex& x)
 }
 ```
 
-
+<br/>
 
 Header (头文件) 的布局
 
@@ -742,7 +738,7 @@ complex::function ...
 #endif
 ```
 
-
+<br/>
 
 operator overloading (操作符重载-2，非成员函数) 无this
 
@@ -806,9 +802,7 @@ ostream& operator << (ostream& os, const complex& x)
 
 C++ 语法没有作用在右边身上的语法。cout是标准库早就写好的，不认识你现在写的复数类型，只认识当时既有的 (building, 内置的)。对于 << 你的函数只能使用全局的写法。
 
-
-
-
+<br/>
 
 temp object (临时对象) typename();
 
@@ -846,7 +840,7 @@ inline complex operator + (double x, const complex& y)
 }
 ```
 
-
+<br/>
 
 class body 之外的各种定义 (definitions)
 
@@ -873,7 +867,7 @@ inline complex operator - (const complex& x)	// negate 反相(取反)
 }
 ```
 
-
+<br/>
 
 class 的声明 (declaration)
 
@@ -894,26 +888,7 @@ private:
 };
 ```
 
-
-
-```cpp
-class complex
-{
-public:
-	complex (double r = 0, double i = 0) 
-        : re (r), im (i)
-	{ }
-	complex& operator += (const complex&);	
-	double real () const { return re; }
-	double imag () const { return im; }
-private:
-	double re, im;	
-	
-	friend complex& _doapl (complex*, const complex&);
-};
-```
-
-
+<br/>
 
 Complex 类的设计与实现过程 (标准库实现)
 
