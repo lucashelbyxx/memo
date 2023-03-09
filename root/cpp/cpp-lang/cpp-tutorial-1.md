@@ -1475,60 +1475,391 @@ delete[] p 这样写的话，编译器才知道你删除的是一个数组，才
 
 # String 类的实现过程
 
+设计一个类首先要思考我需要什么样的数据
+
+字符串里头会放很多字符，一种想法是我里面放一个数组，里头都是字符。这种想法不好，一个数组你一定需要指明有多大，太大太小都不好。大部分人设计一个字符串，都是让里面放一根指针，将来要放多大的字符串内容，就动态分配这个大小，用 new 的方式，传统 C 就用 malloc 的方式。指针多大，在32位的平台上面，一根指针是4个byte，不管字符串的里头放的是什么，字符串对象这个本身就是4个byte。
+
+接下来思考我要准备哪些函数开放给外界调用。首先我要准备一个构造函数，外界创建这个字符串一定会调用起这个构造函数，一定要放在public。它接收指针指向字符，也就是说接收一个字符串，这是传统的C的形式，传进来是不可以改变传进来的东西，只是拿来当初值而已，加 const，并且默认值为 0，因为常常使用者要创建字符串的时候他没有给初值。
+
+字符串这种class它里面有指针，这是一种很经典的类型 class with pointer member。一定要关注三个特殊函数(big three)。第一个就是拷贝构造，要拷贝就要有一个蓝本它自己，第一优先考虑传 reference，不会改，加const。第二个考虑的是拷贝赋值，来源端拷贝到目的端去，来源端跟这种class相同，并不打算改它，加const。目的端得到的结果也是这种class，要不要返回reference呢？这个函数执行的结果要放到什么地方去，放进去的地方是不是local object。只要不是local object就可以传reference。这个目的端本来就存在的，不需要在函数里创建，所以我们这边加reference。第三个是析构函数。
+
+除此之外，还要不要写什么辅助函数？希望把字符串丢到cout，做法很简单，如果我能取到这里面这个字符 m_data，cout是可以接收这种东西的。指针指向字符的这种字符串，就是所谓的C风格的字符串。这个函数有改动m_data这个数据吗？没有，要加const。前面的函数要不要加const呢？想想这些函数，其实都有更改
+
+```cpp
+// 放在头文件，还要防卫式声明
+class String
+{
+public:
+    String(const char* cstr = 0);
+    String(const String& str);
+    String& operator=(const String& str);
+    ~String();
+    char* get_c_str() const { return m_data; }
+private:
+    char* m_data;
+};
+```
+
+<br>
+
+ctor 和 dtor (构造函数和析构函数)
+
+构造函数我们要分配足够的空间放初值。使用那两个函数要include什么头文件。我们总是尽量让我们的函数成为inline。
+
+```cpp
+inline 
+String::String(const char* cstr = 0)
+{
+    if (cstr) {
+        m_data = new char[strlen(cstr)+1];
+        strcpy(m_data, cstr);
+    }
+    else {	// 未指定初值
+        m_data = new char[1];
+        *m_data = '\0';
+    }
+}
+
+
+inline
+String::~String() 
+{
+    delete[] m_data;
+}
+```
+
+<br>
+
+copy ctor (拷贝构造函数)
+
+```cpp
+inline
+String::String(const String& str)
+{
+    m_data = new char[ strlen(str.m_data) + 1 ];
+    strcpy(m_data, str.m_data);
+}
+```
+
+你怎么把这么复杂的函数inline？没关系，加上inline也不会错。
+
+<br>
+
+copy assignment operator (拷贝赋值函数)
+
+你的东西从来源端到目的端，现在目的端是本来存在的东西，所以目的端这边需要把自己清掉。杀掉之后重新分配一块够大的空间。把来源端拷贝到目的端。
+
+赋值完毕后return。按理说来源端拷贝到目的端，被赋值完就结束了。其实don't care，没有人在乎最后返回什么。所以很多人就不 return，设计为 void。某种情况ok，某种情况失败。我们习惯把东西连串赋值，这种情况返回类型就不能是 void。传出去的人不必知道接收端以什么形式接收。
+
+拷贝赋值一定要关注是不是自我赋值 (来源端与目的端相同)。不只是效率问题，还是对与不对的问题。
+
+```cpp
+// 这里的&是reference，放在typename后面
+inline String& String::operator=(const String& str)	
+{
+    if (this == &str)	// 这里的&叫取地址
+        return *this;
+    
+    delete[] m_data;
+    m_data = new char[ strlen(str.m_data) + 1 ];
+    strcpy(m_data, str.m_data);
+    return *this;
+}
+```
+
+
+
 # 扩展：类模板，函数模板，及其他
 
-# 组合与继承
+目前为止，谈过了基于对象的程序设计，也就是写单一的class，有带指针的和不带指针的，掌握了这两种class的精髓，该怎么设计它。接下来进行补充，这些特性没有出现在之前的例子里。
 
-# 虚函数与多态
+当我们基于对象的这种写法完成之后，我们下一个主题就是面向对象，就是很多个class彼此的组合，有什么样的关系结合在一起。你必须很清楚你的程序在很多的class之间走来走去的时候，你要对这个this pointer要有充分的了解你才能做到这点。
 
-# 委托相关设计
+进一步补充：static
+
+现在加了static的数据，它就跟对象脱离了，它不属于对象。它单独有一份，在内存里的某个区域。什么时候使用这种静态的数据。比如，你现在设计一个银行账户的体系，有一百万个人来开户，程序里显然要创建一百万个账户出来，但是里头有一样东西不应该与账户有关，那就是利率。应该设计为静态的数据，只有一份。
+
+静态的函数呢？它跟一般的成员函数在内存一样，也只有一份。什么时候使用静态函数？静态函数跟一般函数的区别在于没有this pointer。既然没有this pointer，它就不能像一般函数那样去访问、存取、处理这些对象里面的东西。它只能处理静态数据。
+
+```cpp
+complex
+data members
+static data members
+member functions
+static member functions
+
+
+/* 在之前没提到static的时候，这样写，使用者创建三个复数，在内存里面是什么样子呢？
+3x2 double，实部虚部。
+*/
+complex c1, c2, c3;
+cout << c1.real();
+cout << c2.real();
+
+/* 换个角度看，以C的角度看。这个函数就是complex::real(&c1)，谁调用我谁就是那个this pointer。
+c1 的地址才能成为指针，this pointer。调用相同的函数但是传给它的是不同的地址，这样它才能够通过
+不同的地址去处理不同的数据。
+成员函数只有一份，但是它要处理很多个对象，一定要有某个数据告诉它你要处理谁，靠的就是这个this pointer。
+*/
+complex c1, c2, c3;
+cout << complex::real(&c1);
+cout << complex::real(&c2);
+
+/* 先前强调过成员函数有一个隐藏的参数叫this pointer，但是我们不能写进去，
+这个是编译器自动帮我们写的。虽然参数不会表现出来，但是真的有这个东西，
+你可以在函数里头用它。现在this->可写可不写，小括号里不能写，
+函数里面不写的话，编译器会帮你加。
+*/
+class complex
+{
+public:
+    double real () const { return this->re; }
+private:
+    double re, im;
+}
+```
+
+设计一个account，利率叫m_rate，为了处理这个数据，设置了set_rate。
+
+```cpp
+class Account {
+public:
+    // 在类里头说这个变量是静态的，只是声明而已。它是脱离于对象的，属于类的
+    static double m_rate;
+    static void set_rate(const double& x) { m_rate = x; }
+};
+// 如果是静态数据，一定要在class的外头初始化，设初值。严格来讲叫定义，definition
+// 一般来说写一行下来，这里的变量获得内存，叫定义
+// 至于要不要给 = 8.0 初值，都可以
+double Account::m_rate = 8.0;
+
+int main() {
+    // 调用static函数的方式有二：
+    // 1.通过 object 调用
+    // 2.通过 class name 调用。如果现在还没有人来开户，但是我要先把利率设置好
+    Account::set_rate(5.0);
+    
+    Account a;
+    a.set_rate(7.0);
+}
+```
+
+Singleton
+
+```cpp
+class A {
+public:
+    static A& getInstance( return a; );
+    setup() { ... }
+private:
+    A();
+    A(const A& rhs);
+    static A a;
+    ...
+}
+
+// 通过得到的A调用任何一个函数
+A::getInstance().setup()
+```
+
+如果外界都没有用到，这个A仍然存在，有点浪费。
+
+进一步补充：把ctors放在private区
+
+Meyers Singleton
+
+```cpp
+class A {
+public:
+    static A& getInstance();
+    setup() { ... }
+private:
+    A();
+    A(const A& rhs);
+    ...
+};
+
+// 唯一差别。在C里面就存在的，
+// 一个函数里面静态数据的意思是只有当有人调用它这个东西才会出现。离开这个函数之后，这个东西还在。
+// 如果没有任何人使用这个单例的话，它就不存在。一旦有人用了一次这个单例才出现并且永远只有这一份。
+A& A::getInstance()
+{
+    static A a;
+    return a;
+}
+
+
+A::getInstance().setup();
+```
+
+<br>
+
+进一步补充：cout
+
+为什么cout可以接受各种类型的数据？是不是<<这个operator做了这么多类型的重载。
+
+```cpp
+class _IO_ostream_withassign : public ostream
+{
+    ...
+};
+
+// cout就是一种ostream
+extern _IO_ostream_withassign cout;
+
+
+class ostream : virtual public ios
+{
+    public:
+    	ostream& operator<<(char c);
+    	ostream& operator<<(unsigned char c) { return (*this) << (char)c; }
+    	ostream& operator<<(signed char c) { return (*this) << (char)c; }
+    	ostream& operator<<(const char *s);
+    	ostream& operator<<(const unsigned char *s)
+        	{ return (*this) << (const char*)s; }
+    	ostream& operator<<(const signed char *s)
+        	{ return (*this) << (const char*)s; }
+    	ostream& operator<<(const void *p);
+    	ostream& operator<<(int n);
+    	ostream& operator<<(unsigned int n);
+    	ostream& operator<<(long n);
+    	ostream& operator<<(unsigned long n);
+    	...	
+}
+```
+
+<br>
+
+进一步补充：class template，类模板
+
+之前设计复数的时候，实部虚部设计为double。用double太死了，将来可能放float。实部虚部不写死它，用一个符号来表示。然后必须告诉编译器，T是一个符号而已，template<typename T>，告诉编译器，目前 T 还没有被绑定，还不知道是什么。
+
+```cpp
+template<typename T>
+class complex
+{
+public:
+    complex (T r = 0, T i = 0) : re (r), im (i) { }
+    complex& operator += (const complex&);
+    T real () const { return re; } 
+    T imag () const { return im; }
+private:
+    T re, im;
+    
+    friend complex&_doapl (complex*, const complex&);
+};
+
+
+{
+    // 使用的时候未定的类型要绑定为double
+    complex<double> c1(2.5, 1.5);
+    complex<int> c2(2,6);
+	...
+}
+```
+
+<br>
+
+进一步补充：function template，函数模板
+
+这里有几个初值，我要取出其中最小的一个。比大小如果专门为 stone 服务的话，传进ab都是stone。但是我现在想，好像传进任何东西都是这样写 return b < a ? b : a;。是不是可以不要说ab是stone，说它是T，返回类型也是T。
+
+类模板的用法用的时候必须明确指出来里头的type要绑定什么。现在是函数模板，不必明确指出来，因为编译器会进行实参推导 (argument deduction)。
+
+r1、r2 都是 stone，那么跑到min函数把所有的T替换为stone，得到一个函数的版本。stone要比大小，编译器怎么知道？操作符重载。
+
+不管什么东西比大小，都是这个符号。至于这个符号作用在stone、person、animal身上，该怎么去比大小。设计这个比大小的人责任不在他身上，责任在设计stone的这个人身上。
+
+```cpp
+// 编译器会对function template进行引数(实参)推导(argument deduction)
+stone r1(2,3), r2(3,3), r3;
+// 引数推导的结果，T 为 stone，于是调用 stone::operator<
+r3 = min(r1, r2);
+
+template <class T>
+inline
+const T& min(const T& a, const T& b)
+{
+    return b < a ? b : a;
+}
+
+class stone
+{
+public:
+    stone(int w, int h, int we) : _w(w), _h(h), _weight(we) { }
+    bool operator< (const stone& rhs) const 
+    	{ return _weight < rhs._weight; }
+private:
+    int _w, _h, _weight;
+};
+```
+
+<br>
+
+进一步补充：namespace
+
+```cpp
+namespace std
+{
+    ...
+}
+
+
+// using directive, 使用命令
+// 等于把封锁全部打开，不用再写全名
+#include <iostream.h>
+using namespace std;
+
+int main()
+{
+    cin << ...;
+    cout << ...;
+    
+    return 0;
+}
+
+
+// using declaration
+// 一行一行打开
+#include <iostream.h>
+using std::cout;
+
+int main()
+{
+    std::cin << ...;
+    cout << ...;
+    
+    return 0;
+}
+
+
+#include <iostream.h>
+
+int main()
+{
+    std::cin << ;
+    std::cout >> ...;
+    
+    return 0;
+}
+```
 
 
 
-导读
+更多细节深入
 
-conversion function
-
-non-explicit one argument constructor
-
-pointer-like classes
-
-function-like classes
-
-namespace经验谈
-
-class template
-
-function template
-
-member template
-
-specialization
-
-模板偏特化
-
-模板参数
-
-关于 C++ 标准库
-
-三个主题
-
-reference
-
-符合&继承关系下的构造和析构
-
-关于 vptr 和 vtbl
-
-关于 Dynamic Binding
-
-关于 this
-
-关于 new， delete
-
-operator new, operator delete
-
-示例
-
-重载 new(), delete()
-
-basic_string 使用new(extra)扩充申请量
+- operator type() const;
+- explicit complex(...) : initialization list { }
+- pointer-like object
+- function-like object
+- namespace
+- template specialization
+- Standard Library
+- variadic template (since C++11)
+- move ctor (since C++11)
+- rvalue reference (since C++11)
+- auto (since C++11)
+- lambda (since C++11)
+- range-base for loop (since C++11)
+- unordered containers (since C++)
+- ...
