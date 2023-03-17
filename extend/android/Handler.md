@@ -2,18 +2,6 @@
 
 
 
-![image-20220909231148113](../../res/img/image-20220909231148113.png)
-
-
-
-![image-20220909234428414](../../res/img/image-20220909234428414.png)
-
-
-
-![image-20220909234710332](../../res/img/image-20220909234710332.png)
-
-
-
 子线程通过sendMessage把消息发送到MessageQueue，主线程在activityThread.main里面会调用looper.loop开启一个死循环从MessageQueue取消息，handleMessage  
 
 
@@ -67,7 +55,3 @@
 8. handler没有消息处理是阻塞的还是非阻塞的？为什么不会有ANR产生？
 
 
-
-Java 虚拟机
-
-![image-20220910001132408](../../res/img/image-20220910001132408.png)
