@@ -1,29 +1,25 @@
 # 容器 deque
 
-Deque描述，双向开口的空间。对于单向开口，就是vector，vector进行单向扩充。
+Deque描述，双向开口的空间。对于单向开口，就是vector，vector进行单向扩充。deque双向扩充怎么做呢？
+
+常常讲deque叫分段连续，5个buffer缓冲区怎么串接起来呢？靠的是下图的map，内部是用vector实现的。
+
+deque的迭代器是一个class。node指的是控制中心，迭代器加加减减就能跳到另一个分段去。first、last指的是node所指的分段buffer里的头和尾，这两个指针表示该缓冲区的边界。cur当前指向元素。
+
+几乎所有的容器都维护了两个迭代器，分别指向头和尾，start和finish，成员函数begin()和end()。
 
 ![image-20230327130340071](assets/image-20230327130340071.png)
 
-
+创建deque的时候，对象本身是40 bytes。至于内部放多少个元素，那是动态获得的，跟对象本身没有关系。
 
 ```cpp
-//如果n不为0，传回n，表示buffer size由使用者自定
-//如果n为0，表示buffer size使用预设值，那么
-// 如果sz(sizeof(value_type))小于512，传回512/sz,
-// 如果sz不小于512，传回1。
-inline size_t __deque_buf_size(size_t, size_t sz)
-{
-    return n != 0 ? n : (sz < 512 ? size_t(512/sz) : size_t(1));
-}
-
-
 template <class T, class Alloc=alloc, size_t BufSiz=0>
 class deque {	//所谓buffer size是指每个buffer容纳的元素个数
 public:
     typedef T value_type;
     typedef __deque_iterator<T, T&, BufSiz> iterator;
 protected:
-    typedef pointer* map_pointer; // T**
+    typedef pointer* map_pointer; // T**, 因为map指向的每个元素都是指针
 protected
     iterator start;
     iterator finish;
@@ -35,11 +31,24 @@ public:
     size_type size() const { return finish - start;}
 ...
 };
+
+
+//为什么BufSiz默认值为0呢？
+//如果n不为0，传回n，表示buffer size由使用者自定
+//如果n为0，表示buffer size使用预设值，那么
+// 如果sz(sizeof(value_type))小于512，传回512/sz,
+// 如果sz不小于512，传回1。
+inline size_t __deque_buf_size(size_t, size_t sz)
+{
+    return n != 0 ? n : (sz < 512 ? size_t(512/sz) : size_t(1));
+}
 ```
 
 
 
 # deque's iterator
+
+迭代器大小是16。
 
 ```cpp
 template <class T, class Ref, class Ptr, size_t BufSiz>
@@ -62,6 +71,10 @@ struct __deque_iterator {
 ```
 
 
+
+# deque<T>::insert()
+
+插入元素可以往前往后推，往短的一边推比较快。
 
 ```cpp
 // 在position处安插一个元素，其值为 x
@@ -119,6 +132,7 @@ reference operator[] (size_type n)
 reference front()
 { return *start; }
 
+//finish指的是最后一个元素的下一个
 reference back()
 {
     iterator tmp = finish;
@@ -131,7 +145,7 @@ size_type size() const
 
 bool empty() const
 { return finish == start; }
-
+ 
 
 reference operator*() const
 { return *cur; }
@@ -194,15 +208,21 @@ reference operator[](difference_type n) const
 
 
 
+# G4.9 version
+
+G2.9只有一个单一的class，到了G4.9就变这么多。可以归纳出一个情况：各个容器从一个单一的class变成复杂的，本体有一个base，base里面会有一个数据implementation，这个impl继承自allocator。
+
 ![image-20230327181620134](assets/image-20230327181620134.png)
 
-
+控制中心vector扩充的时候，原数据扩充到新空间的中段，方便两端进行扩充。
 
 ![image-20230327181701496](assets/image-20230327181701496.png)
 
 
 
 # 容器 queue
+
+queue内含一个deque。有时把queue叫适配器，把别人改装下变成自己。
 
 ![image-20230327181733375](assets/image-20230327181733375.png)
 
@@ -214,9 +234,9 @@ reference operator[](difference_type n) const
 
 
 
-queue 和 stack，关于其 iterator 和底层结构
+# queue 和 stack，关于其 iterator 和底层结构
 
-stack 或 queue 都不允许遍历，也不提供 iterator。
+stack 或 queue 都不允许遍历，也不提供 iterator。标准容器都允许遍历，允许某个地方插入insert元素，但现在这两个有特殊行为，一个先进先出，一个先进后出，如果允许你任意放元素的话，就会干扰这个行为模式，所以不允许这样放元素，放元素要靠迭代器，所以不给你提供迭代器。
 
 `stack<string>::iterator ite;	//[Error]'iterator' is not a member of 'std::stack<std::basic_string<char>>'`
 
@@ -243,11 +263,17 @@ stack<string, list<string>> c;
 
 queue 不可选择 vector 做为底层结构。
 
+使用模板的时候，编译器不会帮你进行全面性的检测，你用到多少它才帮你检测多少。size(), front(), back() 都是可以调用的，只有 pop() 不能调用。只是局部不行而已。
+
 `c.pop();	//[Error] 'class std::vector<std::basic_string<char>>' has no member named 'pop_front'`
+
+
 
 stack 可选择 vector 做为底层结构。
 
 
 
 stack 和 queue 都不可选择 set 或 map 做为底层结构。
+
+如果你做底部支撑，当它转调用的时候调用不到正确函数的话，就不能作为候选。
 
