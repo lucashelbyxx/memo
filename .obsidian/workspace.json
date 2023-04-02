@@ -8,29 +8,18 @@
         "type": "tabs",
         "children": [
           {
-            "id": "f12fa189a6d85c92",
+            "id": "6048200a4456e2cf",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "root/design-patterns/diving-into-design-patterns/结构型模式-2.md",
-                "mode": "preview",
+                "file": "root/ai/python/python3-学习笔记.md",
+                "mode": "source",
                 "source": false
               }
             }
-          },
-          {
-            "id": "6048200a4456e2cf",
-            "type": "leaf",
-            "state": {
-              "type": "release-notes",
-              "state": {
-                "currentVersion": "1.1.15"
-              }
-            }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -72,7 +61,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 200
   },
   "right": {
     "id": "5fa675777b5cb09d",
@@ -88,7 +77,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "root/design-patterns/diving-into-design-patterns/结构型模式-2.md",
+                "file": "root/ai/python/python3-学习笔记.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -117,10 +106,15 @@
   },
   "active": "6048200a4456e2cf",
   "lastOpenFiles": [
+    "root/os/03-应用视角的操作系统.md",
+    "extend/others/windows.md",
+    "root/os/02-操作系统概述.md",
+    "root/cpp/cpp-lang/cpp-tutorial-1.md",
+    "root/os/01-allin.md",
     "root/design-patterns/diving-into-design-patterns/结构型模式-2.md",
+    "root/design-patterns/diving-into-design-patterns/创建型模式-2.md",
     "root/design-patterns/diving-into-design-patterns/行为模式-2.md",
     "root/design-patterns/diving-into-design-patterns/结构型模式-1.md",
-    "root/design-patterns/diving-into-design-patterns/创建型模式-2.md",
     "root/design-patterns/diving-into-design-patterns/img/image-20230221225030316.png",
     "root/design-patterns/diving-into-design-patterns/创建型模式-1.md",
     "others/常用.md",
