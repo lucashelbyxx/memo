@@ -2,13 +2,27 @@
 
 ![image-20230329163131759](assets/image-20230329163131759.png)
 
-
-
 ![image-20230329163150415](assets/image-20230329163150415.png)
+
+如果某个bucket过长，搜寻时间变慢。通常如果元素个数比篮子的个数还多，就要打散，把篮子增加成两倍。每个元素落到哪个篮子需要重新计算。一般选两倍后附近的质数作为篮子个数。
+
+
 
 ![image-20230329163224229](assets/image-20230329163224229.png)
 
+HashFcn，每个元素通过这个function得到编号，术语叫hashcode。
 
+你放进去的元素是一包东西，要知道怎么从这包东西取出key来，ExtractKey告诉你。
+
+EqualKey，你要告诉它什么叫key相等。
+
+hashtable的大小。上面三个是function object，大小是0，实际上是1。vector三根指针，12。size_type 是 unsigned integer，4。
+
+迭代器 iterator 里面的cur应该指向某个元素，而不是篮子，画错了。有个hashtable指针，走到边界后有能力进入下一个篮子。
+
+
+
+你必须根据你手上数据的分布、性质来设计一个 HashFcn。
 
 ```cpp
 //App
@@ -48,7 +62,7 @@ private:
 
 
 
-# hash-function, has-code
+# hash-function, hash-code
 
 ```cpp
 //泛化
@@ -76,11 +90,7 @@ __STL_TEMPLATE_NULL struct hash<int> {
 __STL_TEMPLATE_NULL struct hash<unsigned int> {
     size_t operator() (unsigned int x) const { return x; }
 }
-```
 
-
-
-```cpp
 inline size_t __stl_hash_string(const char* s)
 {
     unsigned long h = 0;
