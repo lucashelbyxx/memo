@@ -4,45 +4,22 @@
     "type": "split",
     "children": [
       {
-        "id": "5b027e858c160437",
+        "id": "3e71ef3a234b6717",
         "type": "tabs",
         "children": [
           {
-            "id": "6048200a4456e2cf",
+            "id": "a635ceb303c01f9f",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "root/ai/python/python3-学习笔记.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "1eb13f966ee40182",
-            "type": "leaf",
-            "state": {
-              "type": "release-notes",
-              "state": {
-                "currentVersion": "1.1.16"
-              }
-            }
-          },
-          {
-            "id": "23ee65705f59ec50",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "extend/efficiency/obsidian.md",
+                "file": "thinking.md",
                 "mode": "source",
                 "source": false
               }
             }
           }
-        ],
-        "currentTab": 2
+        ]
       }
     ],
     "direction": "vertical"
@@ -79,6 +56,14 @@
                 "sortOrder": "alphabetical"
               }
             }
+          },
+          {
+            "id": "4d69c5bd3b61b4b1",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {}
+            }
           }
         ]
       }
@@ -100,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "extend/efficiency/obsidian.md",
+                "file": "thinking.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -127,8 +112,13 @@
       "markdown-importer:Open format converter": false
     }
   },
-  "active": "23ee65705f59ec50",
+  "active": "7c20d47cf52c47d2",
   "lastOpenFiles": [
+    "README.md",
+    "thinking.md",
+    "root/ai/python/python3-学习笔记.md",
+    "extend/efficiency/obsidian.md",
+    "work",
     "root/cpp/cpp-stl-and-gp/assets/image-20230409001925798.png",
     "root/cpp/cpp-stl-and-gp/19-cout.md",
     "root/cpp/cpp-stl-and-gp/Untitled.md",
@@ -144,7 +134,6 @@
     "root/cpp/cpp-stl-and-gp/17-hash-function-tuple.md",
     "root/cpp/cpp-stl-and-gp/18-type-traits.md",
     "root/cpp/cpp-stl-and-gp/16-hash-function-tuple.md",
-    "extend/efficiency/obsidian.md",
     "root/os/03-应用视角的操作系统.md",
     "extend/others/windows.md",
     "root/os/02-操作系统概述.md",
@@ -154,7 +143,6 @@
     "root/design-patterns/diving-into-design-patterns/创建型模式-2.md",
     "root/design-patterns/diving-into-design-patterns/行为模式-2.md",
     "root/design-patterns/diving-into-design-patterns/结构型模式-1.md",
-    "root/design-patterns/diving-into-design-patterns/img/image-20230221225030316.png",
     "root/design-patterns/diving-into-design-patterns/创建型模式-1.md",
     "others/常用.md",
     "others/tutorial.md"

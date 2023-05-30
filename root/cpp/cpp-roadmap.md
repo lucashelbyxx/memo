@@ -12,3 +12,9 @@ Effective C++ Effective C++ 改善程序与设计的55个具体做法
 
 [C++ docs - get started, tutorials, reference. | Microsoft Learn](https://learn.microsoft.com/en-us/cpp/cpp/?view=msvc-170)
 
+
+
+[现代C++白皮书_HOPL4_zh: Chinese translation of Bjarne Stroustrup's HOPL4 paper ](https://github.com/Cpp-Club/Cxx_HOPL4_zh)
+
+
+

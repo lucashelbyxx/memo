@@ -1,0 +1,1 @@
+[从一次线上问题说起，详解 TCP 半连接队列、全连接队列-tcp半连接和全连接队列 (51cto.com)](https://www.51cto.com/article/687595.html)
